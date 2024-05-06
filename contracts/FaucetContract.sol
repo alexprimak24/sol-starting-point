@@ -3,20 +3,21 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract Faucet {
 
-  //this is special function
-  //it's called when you make a tx this doesn't specify function name to call
+  address[] public funders;
 
-  //External functions are part of the contract interface which means they can be 
-  //call via contract and other txs
   receive() external payable {}
 
-  function addFunds() external payable {}
-  
-  function justTesting() external pure returns(uint)  {
-      return 2+2;
+  function addFunds() external payable {
+  funders.push(msg.sender);
   }
-  //pure,view
 
+  function getAllFunders() public view returns (address[] memory) {
+    return funders;
+  }
 
+  function getFunderAtIndex(uint8 index) external view returns(address) {
+    address[] memory _funders = getAllFunders();
+    return _funders[index];
+  }
 }
 
