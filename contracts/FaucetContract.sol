@@ -6,6 +6,17 @@ contract Faucet {
   uint public numOfFunders;
   mapping(address => bool) public funders;
   mapping(uint => address) public lutFunders;
+
+  //modifier is the thing that is needed if we want something to be repeatedly used
+  modifier limitWithdraw(uint withdrawAmount) {
+    //if the require is not met it will just revert tx
+    require(
+      withdrawAmount <= 100000000000000000,
+      "Cannot withdraw more that 0.1 ether"
+    );
+    _; //this is function body (function body this is everything that is inside the function
+       // in which we call that modifier)
+  }
   
   receive() external payable {}
 
@@ -18,6 +29,10 @@ contract Faucet {
       lutFunders[index] = funder;
       funders[funder] = true;
     }
+  }
+
+  function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
+    payable(msg.sender).transfer(withdrawAmount);
   }
 
   function getAllFunders() external view returns (address[] memory) {
@@ -35,11 +50,13 @@ contract Faucet {
   }
 }
 
-//open console
+// open console
 // truffle console
-//create an instance
+// create an instance
 // const instance = await Faucet.deployed();
 // add funds to the contract
 // instance.addFunds({from: accounts[3],value: "20000000"})
 // get a third address that deposited to the faucet
 // instance.getFunderAtIndex(2)
+
+// instance.withdraw("2000000000000000000", {from: accounts[1]})
