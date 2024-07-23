@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-contract Faucet {
+import "./Owned.sol";
+//now faucet inherited all the functionality from Owned
+contract Faucet is Owned{
 
   uint public numOfFunders;
+
   mapping(address => bool) public funders;
   mapping(uint => address) public lutFunders;
 
@@ -20,6 +23,10 @@ contract Faucet {
   
   receive() external payable {}
 
+  function transferOwnership(address newOwner) external onlyOwner {
+    owner = newOwner;
+  }
+
   function addFunds() external payable {
     address funder = msg.sender;
     if (!funders[funder]){
@@ -29,6 +36,14 @@ contract Faucet {
       lutFunders[index] = funder;
       funders[funder] = true;
     }
+  }
+
+  function test1() external onlyOwner{
+   //some managing stuff that only an admin have access to
+  }
+
+  function test2() external onlyOwner{
+   //some managing stuff that only an admin have access to
   }
 
   function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
