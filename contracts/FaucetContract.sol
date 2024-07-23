@@ -2,8 +2,11 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./Owned.sol";
+import "./Logger.sol";
+import "./IFaucet.sol";
+
 //now faucet inherited all the functionality from Owned
-contract Faucet is Owned{
+contract Faucet is Owned, Logger, IFaucet {
 
   uint public numOfFunders;
 
@@ -23,11 +26,15 @@ contract Faucet is Owned{
   
   receive() external payable {}
 
+  function emitLog() public override pure returns(bytes32){
+    return "Hey there";
+  }
+
   function transferOwnership(address newOwner) external onlyOwner {
     owner = newOwner;
   }
-
-  function addFunds() external payable {
+  //as it should follow IFaucet, it should have override
+  function addFunds() external override payable {
     address funder = msg.sender;
     if (!funders[funder]){
       uint index = numOfFunders++; //why this works?
@@ -45,8 +52,8 @@ contract Faucet is Owned{
   function test2() external onlyOwner{
    //some managing stuff that only an admin have access to
   }
-
-  function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
+  //as it should follow IFaucet, it should have override
+  function withdraw(uint withdrawAmount) external override limitWithdraw(withdrawAmount){
     payable(msg.sender).transfer(withdrawAmount);
   }
 
