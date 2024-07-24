@@ -17,27 +17,16 @@ function App() {
       //metamask injects a global API into website
       //this API allows websites to request users, accounts, read data to blockchain,
       //sign messages and transactions
-      let provider = null;
-      //if we are using MM
-      if (window.ethereum) {
-        provider = window.ethereum;
-
-        try {
-          await provider.request({ method: "eth_requestAccounts" });
-        } catch {
-          console.error("User denied accounts access");
-        }
-      } else if (window.web3) {
-        provider = window.web3.currentProvider;
+      const provider = await detectEthereumProvider();
+      if (provider) {
+        provider.request({ method: "eth_requestAccounts" });
+        setWeb3Api({
+          web3: new Web3(provider),
+          provider,
+        });
+      } else {
+        console.error("Please install metamask");
       }
-      //if we are currently in Ganache
-      else if (!process.env.production) {
-        provider = new Web3.providers.HttpProvider("http://127.0.0.1:7545");
-      }
-      setWeb3Api({
-        web3: new Web3(provider),
-        provider,
-      });
     };
     loadProvider();
   }, []);
