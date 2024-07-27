@@ -13,19 +13,19 @@ abstract contract Logger {
   //virtual - if we want to create a function without implementation
   //we need to mark it with virtual keyword
   //pure means that it cannot modify the state
-  function emitLog() public pure virtual returns(bytes32);
-  // internal - only the current contract and contracts that inheriting can call it;
-  // function test3() internal pure returns(uint) {
+  // function emitLog() public pure virtual returns(bytes32);
+  // // internal - only the current contract and contracts that inheriting can call it;
+  // // function test3() internal pure returns(uint) {
+  // //   return 100;
+  // // }
+  // //it means it can only be called outside the functions
+  // function test3() external pure returns(uint) {
   //   return 100;
   // }
-  //it means it can only be called outside the functions
-  function test3() external pure returns(uint) {
-    return 100;
-  }
-  function test5() internal pure returns(uint) {
-    test3();//not possible
-    return 10;
-  }
+  // function test5() internal pure returns(uint) {
+  //   // test3();//not possible
+  //   return 10;
+  // }
   // external - can be called from outside only
   // internal - can be called only from inside
   // public - from inside and outside

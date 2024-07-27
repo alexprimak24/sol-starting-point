@@ -26,7 +26,7 @@ contract Faucet is Owned, Logger, IFaucet {
   
   receive() external payable {}
 
-  function emitLog() public override pure returns(bytes32){
+  function emitLog() public pure returns(bytes32){
     return "Hey there";
   }
 
@@ -36,7 +36,7 @@ contract Faucet is Owned, Logger, IFaucet {
   //as it should follow IFaucet, it should have override
   function addFunds() external override payable {
     address funder = msg.sender;
-    test3();
+    // test3();
     if (!funders[funder]){
       uint index = numOfFunders++; //why this works?
       //numOfFunders++ will increment the value of numOfFunders by 1
