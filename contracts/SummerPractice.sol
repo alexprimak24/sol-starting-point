@@ -1,3 +1,6 @@
+// DAY 1
+
+//BASICS INTO
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -30,3 +33,68 @@ contract Shop {
 }
 
 //payable means that funds can be sent here
+
+//BOOL AND UINT AND INT
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+contract Demo {
+    bool myBool; //by default has false
+
+    function myFunc(bool _inputBool) public {
+        bool localBool = false; //temporary
+        localBool && _inputBool; //and
+        localBool || _inputBool; //or
+        localBool == _inputBool; //equal
+        localBool != _inputBool; //not equal
+        !localBool //not
+    }
+
+    // unsigned integers
+    uint256 public myUint = 42; //256 number of bits 2**256
+
+    uint8 public mySmallUint = 2; //2**8 = 256
+    //Min 0, Max 256-1
+
+    function demo(uint _inputUint) public {
+        uint localUint = 42;
+        localUint + 1;
+        localUint - 1;
+        localUint * 2;
+        localUint / 2;
+        localUint ** 3;//^3
+
+        -myInt //+42
+    }
+
+    //signed integers
+    int public myInt = -42;
+    int8 public mySmallInt = -2;
+    //2 ** 7 = 128 - as it stores a data about sign
+    //min= -128, max= 128-1
+
+    uint public minimum;
+    function demo() public {
+        minimum = type(uint8).min; // that way you can see min value that that type can store
+        //.max - maximal value
+    }
+
+    // if we go over the limit
+    // transaction will just revert
+    uint8 public myVal = 254;
+
+    function inc() public {
+        myVal++;
+    }
+
+    //but in that case our counter myVal will just start from 0
+    uint8 public myVal = 254;
+
+    function inc() public {
+        unchecked {
+            myVal++;
+        }
+    }
+}
