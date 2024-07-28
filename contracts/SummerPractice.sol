@@ -98,3 +98,23 @@ contract Demo {
         }
     }
 }
+
+//Homework
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
+
+contract Demo {
+    bool myBool = true;
+    bool myBool1;
+
+    //called inside and outside of the contract
+    uint public U1 = 1;
+    //only outside of the contract
+    uint external U2 = 2;
+    //can be accesible only within smart contract
+    uint private U3 = 3;
+    //can be accesible within smart contract and derived smart contract
+    int internal I4 = 4;
+}
+
