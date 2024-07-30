@@ -118,3 +118,42 @@ contract Demo {
     int internal I4 = 4;
 }
 
+//DAY 2
+
+//STRINGS
+    //in Solidity strings:
+    //1.Don't have length as they are being stored as byte array
+    //2.You can't concat,compare strings
+    //3.You can't call string characters by index
+    //the more u want to store - the more u pay in gas
+    string public myStr = "test"; //storage, will exist till Ethereum Chain exist
+
+    function demo(string memory newValueStr) public {
+        //temporary
+        string memory myTempStr = "temp";
+        //newValueStr from temporary actually becomes not temporary
+        myStr = newValueStr;
+    }
+
+    //ADDRESS
+    address public myAddr = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    // //function to get user balance
+    function getBalance(address _targetAddr) public view returns(uint){
+        return _targetAddr.balance;
+    }
+    //function to receive funds
+    function receiveFunds() public payable {
+
+    }
+    // //function to transfer funds from the contract
+    function transferTo(address _targetAddr,uint amount) public {
+        address payable _to = payable(_targetAddr);
+        _to.transfer(amount);
+    }
+
+    //MAPPING
+    mapping (address => uint) public payments;//storage
+
+    function receiveFunds() public payable {
+        payments[msg.sender] = msg.value;
+    }
