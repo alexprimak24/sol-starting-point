@@ -283,3 +283,125 @@ contract Demo {
         balances[msg.sender].payments[paymentNum] = newPayment;
     }
 }
+
+//USEFUL CHEATSHEET
+contract Todos {
+
+    // ENUM with shipping options
+    enum Status {
+        Pending,
+        Shipped,
+        Accepted,
+        Rejected,
+        Canceled
+    }
+
+    // default value of that ENUM will be Pending
+
+    // Not type of status is Status enum
+    Status public status;
+
+
+    //Struct creation
+    struct Todo {
+        string text;
+        bool completed;
+    }
+
+    // Using Struct inside an array
+    Todo[] public todos;
+
+     // Creation of array
+    uint[] public arr;
+    uint[] public arr2 = [1, 2, 3];
+    // With max length 10
+    uint[10] public myFixedSizeArr;
+
+
+    function create(string calldata _text) public {
+        // How to add value then
+        // Via push
+        todos.push(Todo(_text, false));
+
+        // Vie push but with keys
+        todos.push(Todo({text: _text, completed: false}));
+
+        // init struct in function memory
+        Todo memory todo;
+        todo.text = _text; //and then set the value
+        // todo.completed will be set to false as it is default for bool
+
+        todos.push(todo); // and then from memory we send it to storage so it will be stored on chain
+    }
+
+    // Updating just one value in struct
+    function updateText(uint _index, string calldata _text) public {
+        Todo storage todo = todos[_index]; //take the value from the storage
+        todo.text = _text; // then we are updating that value in the storage
+    }
+
+    // alternative to instead todo.completed = true)
+    function toggleCompleted(uint _index) public {
+        Todo storage todo = todos[_index];
+        todo.completed = !todo.completed;
+    }
+
+    function get() public view returns (Status) {
+        //get the value of status
+        return status;
+    }
+
+    // Update status by passing uint into input
+    function set(Status _status) public {
+        //Changing status
+        status = _status;
+    }
+
+    // Or just straightforwards way
+    function cancel() public {
+        status = Status.Canceled;
+    }
+
+    // set default value of status (in our case Pending)
+    function reset() public {
+        delete status;
+    }
+    //just get a value from array by index
+    function getArrIndex(uint i) public view returns (uint) {
+        return arr[i];
+    }
+
+    // With that we can get the whole arr
+    // But avoid it as it consumes a lot of gas for huge array
+    // as it may use all the gas and fail tx
+    function getArr() public view returns (uint[] memory) {
+        return arr;
+    }
+
+    function push(uint i) public {
+        // Adding value for an arr
+        arr.push(i);
+    }
+
+    function pop() public {
+        // Delete el from an array
+        arr.pop();
+    }
+
+    //Get the length of an array
+    function getLength() public view returns (uint) {
+        return arr.length;
+    }
+
+    function remove(uint index) public {
+        // By index we set the value to default
+        // It doesn't change the length of an array
+        delete arr[index];
+    }
+
+    function examples() external pure{
+        // this is the length of an array with fixed length inside function
+        uint[] memory a = new uint[](5);
+        // dynamic array can NOT be created inside function
+    }
+}
