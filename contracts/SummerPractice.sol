@@ -405,3 +405,74 @@ contract Todos {
         // dynamic array can NOT be created inside function
     }
 }
+
+//DAY 4
+
+//Functions pure, view, payable, fallback
+
+contract Demo {
+    //public - function can be called from outside and inside
+    //external - function can be called from outside(f.e. send funds from MM)
+    //internal - function can be called from inside and inherited contracts
+    //private - function can be called from inside but not from an inherited contracts
+
+    //view - only read from storage, but not alter them
+    //pure - even don't touch the storage
+
+    //get balance of the contract
+    //explicit form
+    //call
+    function getBalance() public view returns(uint){
+        uint balance = address(this).balance;
+        return balance;
+    }
+    //just another way to get balance
+    //implicit form
+    //call
+    function getBalance1() public view returns(uint balance){
+        balance = address(this).balance;
+        // return balance;
+    }
+
+    string public message = "hello"; //state
+    //this is impossible as we want to return the value form storage but our func is pure
+    // function getMessage() external pure returns(string memory){
+    //     return message;
+    // }
+
+    //how we usually use pure functions
+    //for example this is the function that receives some amount of let's say tokens, and 
+    //then returns x3 number of tokens - how much user would receive for example
+    //call
+    function rate(uint amount) public pure returns(uint) {
+        return amount * 3;
+    }
+
+    //transaction
+                        //here I said that the value we receive is just temporary data
+    function setMessage(string memory newMessage) public {
+        //but once we say that value from storage will have its value, we add this value 
+        //to the chain
+        message = newMessage;
+    }
+    //transaction that alters some data, there is no sence in returning what this tx altered
+    //make it in separate function
+
+    uint public balanceOfContract;
+    
+    //payable means that function can receive funds
+    //just even if we declare function as payable and don't write anything inside it
+    //when we send funds to that function - they will be added to the contract balance
+    function pay() external payable {
+        balanceOfContract += msg.value;
+    }
+
+    //by default if you just send funds to the smart contract address, funds will be returned
+    //this function will be called in case someone sent funds to the smart contract address
+    receive() external payable {} 
+
+    //fallback is called if someone is trying to call the function that don't exist
+    fallback() external payable { }
+}
+
+
