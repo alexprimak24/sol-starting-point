@@ -475,4 +475,65 @@ contract Demo {
     fallback() external payable { }
 }
 
+//EVENTS MODIFIERS REQUIRE REVERT
+
+contract Demo {
+    //require
+    //revert
+    //assert
+    address owner;
+
+    //EVENTS
+                        //with it we can create searching
+                        //up to 3 fields can be indexed
+    event Paid(address indexed _from, uint _amount, uint _timestamp);
+
+    //called only once while creating contract
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function pay() external payable {
+        //this is how we emit our Events, that data is not storing in the chain,
+        //it is storing in the special event log
+        //we are rarely reading from event log , mostly we are reading from it in our frontend part
+        emit Paid(msg.sender,msg.value,block.timestamp);
+    }
+
+
+    //MODIFIERS
+    modifier onlyOwner(address _to) {
+        require(msg.sender == owner,"you are not an owner");
+        //address(0) - 0x00000000
+        require(_to != address(0), "incorrect address!");
+        //without it we won't return to our function execution
+        _;
+        //we can also make checked even after function body
+        // require(...);
+    }
+                                                    //it can even take some values
+    function withdraw(address payable _to) external onlyOwner(_to){
+        //REQUIRE
+        //if this is false then tx will just revert
+        require(msg.sender == owner,"you are not an owner!");
+
+        _to.transfer(address(this).balance);
+
+        //REVERT
+        // if(msg.sender != owner) {
+        //     revert("you are not an owner!");
+        // }
+        // revert("you are not an owner!"); //so revert reverts tx and trows a message
+        //so difference between require and revert, in require we can easily write condition
+        //inside require, in revert we have to do it manually
+
+        //ASSERT
+        //it is used quite rarely, in cases when we want to sure that something really 
+        //dangerous won't happen
+        //in case this is wrong - it will panic
+        //and we also won't receive normal error for the reason what happened
+        assert(msg.sender == owner);
+
+    }
+}
 
