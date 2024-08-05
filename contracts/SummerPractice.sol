@@ -471,7 +471,8 @@ contract Demo {
     //this function will be called in case someone sent funds to the smart contract address
     receive() external payable {} 
 
-    //fallback is called if someone is trying to call the function that don't exist
+    //A user sends Ether to the contract without specifying any data.
+    //A user calls a function that does not exist in the contract.
     fallback() external payable { }
 }
 
