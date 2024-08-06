@@ -538,3 +538,96 @@ contract Demo {
     }
 }
 
+//DAY 5
+
+//CALL
+
+contract TestCall {
+  string public message;
+  uint public x;
+
+  event Log(string message);
+
+  fallback() external payable { 
+    emit Log("fallback was called");
+  }
+
+  function foo(string memory _message, uint _x) external payable returns(bool,uint) {
+    message = _message;
+    x = _x;
+    return (true, 999);
+  }
+}
+
+contract Call {
+    bytes public data;
+
+    function callFoo(address _test) external payable {
+        //we need to encode the func that we are going to call, we use abi.encodeWithSignature
+        //1.functions we are going to call 2.arguments for that func        
+        //when we use call it returns boolean and data (return of that function) (data is going to be in bytes)
+        //we can also specify the value that we are going to send and amount of gas that is going to be used
+        (bool success, bytes memory _data) = _test.call{value: 111}(abi.encodeWithSignature("foo(string, uint256)", "call foo", 123));
+        require(success, "call failed");
+        data = _data;
+    }
+
+    //trying to call the function that doesn't exist
+    function callDoesNotExist(address _test) external {
+        (bool success, ) = _test.call(abi.encodeWithSignature("doesNotExist()"));
+        require(success, "call failed");
+    }
+}
+
+//DELEGATECALL
+
+/*
+A calls B, sends 100 wei
+    B calls C, sends 50 wei
+A ---> B ---> C
+                msg.sender = B
+                msg.value = 50
+                execture code on C's state variables
+                use ETH in C
+
+A calls B, sends 100 wei
+        B delegatecall C
+A ---> B ---> C
+                msg.sender = A
+                msg.value = 100
+                execute code on B's state variables
+                use ETH in B
+*/
+//!!! if we are using delegatecall all our state variables should 
+//be the same and with the same storage slot
+
+//the main benefit of delegate call, is like we can update our setVars functionality
+//for example num = _num; we can set to num = 3 * _num; , and it will be multiplying value
+//by 3 in DelegateCall, but as we noticed, we didn't redeplyed our DelegateCall contract
+contract TestDelegateCall {
+  //they will be uninitialized even after calling setVars from DelegateCall
+  uint public num;
+  address public sender;
+  uint public value;
+
+  function setVars(uint _num) external payable {
+    num = _num;
+    sender = msg.sender;
+    value = msg.value;
+  }
+}
+
+contract DelegateCall {
+    uint public num;
+    address public sender;
+    uint public value;
+    //so while calling setVars we will update values that are in our contract
+    function setVars(address _test, uint _num) external payable {
+        // _test.delegatecall(abi.encodeWithSignature("setVars(uint256)",_num))
+        //this method is kinda better as you don't need to update anything manually if needed
+        (bool success, bytes memory data) = _test.delegatecall(abi.encodeWithSelector(TestDelegateCall.setVars.selector,_num));
+        require(success,"delegatecall failed");
+    }
+
+}
+
