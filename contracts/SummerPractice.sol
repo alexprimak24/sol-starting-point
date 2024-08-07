@@ -667,3 +667,112 @@ contract Var {
     address public MY_ADDRESS = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 }
 
+//FUNCTION OUTPUTS
+
+contract FunctionOutputs {
+
+  //this is how we return multiple outputs
+  function returnMany() public pure returns(uint, bool) {
+    return(1,true);
+  }
+  //named outputs
+  function returnNamed() public pure returns(uint x, bool b) {
+    //btw that way will save some gas because there is one less copy to do.
+    x = 1;
+    b = true;
+  }
+  //destricturing assignments
+  function destructuringAssignments() public pure {
+    //this is how we can distructure and assign value
+    (uint x, bool b) = returnMany();
+    //get only the second value
+    (,bool _b) = returnMany();
+  }
+}
+
+//REMOVE ELEMENT IN ARRAY
+
+// ARRAY REMOVE AN ELEMENT BY SHIFTING
+
+// 1
+
+//it is not gas efficient by any means
+contract ArrayShift {
+  uint[] public arr;
+
+  function example() public {
+    arr = [1,2,3];
+    //in that case we are not deleting a value, just set it to default value
+    //so the result will be [1,0,3]
+    delete arr[1];
+  }
+
+  // [1, 2, 3] -- remove(1) --> [1, 3, 3] --> [1,3]
+  // [1, 2, 3, 4, 5, 6] -- remove(2) --> [1, 2, 4, 5, 6, 6] --> [1, 2, 4, 5, 6]
+  // [1] -- remove(0) --> [1] --> []
+  function remove(uint _index) public {
+    require(_index < arr.length, "index out of bound");
+    for (uint i = _index; i < arr.length - 1; i++) {
+      arr[i] = arr[i+1];
+    }
+    arr.pop();
+  }
+
+  function test() external {
+    arr = [1, 2, 3, 4, 5];
+    remove(2);
+    // [1, 2, 4, 5]
+    assert(arr[0] == 1);
+    assert(arr[1] == 2);
+    assert(arr[2] == 4);
+    assert(arr[3] == 5);
+    assert(arr.length == 4);
+
+    arr = [1];
+    remove(0);
+    // []
+    assert(arr.length == 0);
+  }
+ 
+}
+
+//REMOVE ELEMENT IN ARRAY
+
+// 2
+
+//more gas efficient
+
+contract ArrayReplaceLast {
+  uint[] public arr = [1, 2, 3, 4];
+  // in that algorytm the order is not preserved
+  // [1, 2, 3, 4] -- remove(1) --> [1, 4, 3]
+  // [1,4, 3] -- remove(2) --> [1, 4]
+  function remove(uint _index) public {
+    require(_index < arr.length, "index out of bound");
+    // arr = [1, 2, 3, 4];
+    //remove(1)
+    arr[_index] = arr[arr.length - 1];
+    arr.pop();
+  }
+
+  function test() external {
+    arr = [1, 2, 3, 4];
+
+    remove(1);
+
+    // [1, 4, 3]
+    assert(arr.length == 3);
+    assert(arr[0] == 1);
+    assert(arr[1] == 4);
+    assert(arr[2] == 3);
+
+    remove(2);
+    // [1, 4]
+    assert(arr.length == 2);
+    assert(arr[0] == 1);
+    assert(arr[1] == 4);
+  }
+}
+
+
+
