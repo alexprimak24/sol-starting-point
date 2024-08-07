@@ -631,3 +631,18 @@ contract DelegateCall {
 
 }
 
+// DAY 6
+
+//CONSTANTS
+
+//this will be cheaper
+contract Constants {
+  //as a convention constants are capitalized
+  //the main benefit of declaring a constant is that you save gas
+    address public constant MY_ADDRESS = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+}
+
+contract Var {
+    address public MY_ADDRESS = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+}
+
