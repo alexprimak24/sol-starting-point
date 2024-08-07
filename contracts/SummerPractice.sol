@@ -520,6 +520,27 @@ contract Demo {
 
         _to.transfer(address(this).balance);
 
+        // IMPORTANT ABOUT REQUIRE
+        contract Error {
+          uint public num = 100;
+        
+          function foo(uint _i) public{
+            //if the require won't be met (we pasted more than 10) state change will be reverted
+            //if you also sent 1000 gas and used 100 gas, 900 gas will be refunded
+            num += 10;
+            //the longer your error msg, the more gas you'll use 
+            require(_i < 10, "my long long long error message");
+          }
+           //CUSTORM ERRORS (in Sway there is also such thing)
+           error MyError(address caller, uint i);
+        
+           function testCustomError(uint _i) public view {
+            if(_i < 10) {
+              revert MyError(msg.sender,_i);
+            }
+           }
+        }
+
         //REVERT
         // if(msg.sender != owner) {
         //     revert("you are not an owner!");
