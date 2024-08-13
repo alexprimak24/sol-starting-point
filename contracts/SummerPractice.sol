@@ -841,3 +841,38 @@ struct Car {
         delete cars[1];
     }
 
+// DAY 8
+
+//STORAGE MEMORY CALLDATA
+
+   struct MyStruct {
+    uint foo;
+    string text;
+   }
+
+   mapping(address => MyStruct) public myStructs;
+   //nonmodifiable and non-persistent data location
+   function examples(uint[] calldata y, string calldata s) external returns(uint[] memory){
+    myStructs[msg.sender] = MyStruct({foo: 123,text: "bar"});
+
+    //it will chnage the state
+    MyStruct storage myStruct = myStructs[msg.sender];
+    myStruct.text = "foo";
+    //once the function is done executing, the changes will be lost
+    MyStruct memory readOnly = myStructs[msg.sender];
+    readOnly.foo = 456;
+
+    _internal(y); 
+
+    //this is how we init arr in memory 
+    //it has to be only with fixed size
+    //in our case we set the length to 3
+    uint[] memory memArr = new uint[](3);
+    memArr[0] = 234;
+    return memArr;
+   }
+   //if we use memory in that case then we have to make a copy of an array
+   //but if we use calldata it will just pas an array to our function without creating an extra copy
+   function _internal(uint[] calldata y) private {
+    uint x = y[0];
+   }
